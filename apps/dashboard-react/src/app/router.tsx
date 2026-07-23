@@ -292,6 +292,9 @@ function RequireAuth({ children }: { children: ReactNode }) {
 
   if (!hasAdminAuthSession()) {
     clearAuthSession()
+    if (location.pathname === '/') {
+      return withSuspense(<WelcomePage />)
+    }
     const from = `${location.pathname}${location.search}${location.hash}`
     return <Navigate to="/login" replace state={{ from }} />
   }
