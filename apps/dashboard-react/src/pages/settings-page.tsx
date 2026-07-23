@@ -222,6 +222,25 @@ function BillingSubscriptionsSection() {
         </SettingRow>
       ) : org ? (
         <>
+          <SettingRow
+            label="Business ID"
+            description="You'll need this along with your Admin Code and PIN to sign in."
+          >
+            <div className="flex items-center gap-2">
+              <code className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-soft)] px-3 py-1.5 text-sm">
+                {org.branchIds[0]}
+              </code>
+              <button
+                type="button"
+                onClick={() => {
+                  void navigator.clipboard.writeText(org.branchIds[0]);
+                }}
+                className="rounded-lg border border-[color:var(--border)] px-2.5 py-1.5 text-xs font-medium hover:bg-[color:var(--surface-soft)]"
+              >
+                Copy
+              </button>
+            </div>
+          </SettingRow>
           <SettingRow label="Account" description={org.name}>
             <span
               className={`rounded-full px-3 py-1 text-xs font-semibold ${

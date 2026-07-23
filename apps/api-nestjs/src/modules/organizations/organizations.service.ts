@@ -186,6 +186,7 @@ export class OrganizationsService {
       trialStartedAt: org.trialStartedAt,
       trialEndsAt: org.trialEndsAt,
       daysRemaining: Math.ceil(msRemaining / (24 * 60 * 60 * 1000)),
+      branchIds: org.branchIds,
     };
   }
 

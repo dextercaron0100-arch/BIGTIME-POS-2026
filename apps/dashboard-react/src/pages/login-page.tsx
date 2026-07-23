@@ -15,7 +15,6 @@ type LoginLocationState = {
   notice?: string;
 };
 
-const DASHBOARD_BRANCH_ID = "branch-manila";
 const DASHBOARD_TERMINAL_ID = "dashboard-web-01";
 
 function parseLoginError(error: unknown) {
@@ -39,6 +38,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const setSelectedBranch = useUiStore((state) => state.setSelectedBranch);
+  const [businessId, setBusinessId] = useState("");
   const [employeeCode, setEmployeeCode] = useState("");
   const [pin, setPin] = useState("");
   const [mfaRequired, setMfaRequired] = useState(false);
@@ -66,7 +66,7 @@ export function LoginPage() {
 
     try {
       const response = await login({
-        branchId: DASHBOARD_BRANCH_ID,
+        branchId: businessId.trim().toLowerCase(),
         terminalId: DASHBOARD_TERMINAL_ID,
         employeeCode: employeeCode.trim().toUpperCase(),
         pin: pin.trim(),
@@ -194,7 +194,7 @@ export function LoginPage() {
           </div>
         </div>
 
-        <p className="login-left-footer">Manila Flagship Branch</p>
+        <p className="login-left-footer">Multi-branch ready</p>
       </div>
 
       {/* ── Right form panel ── */}
@@ -361,6 +361,20 @@ export function LoginPage() {
             </form>
           ) : (
             <form onSubmit={handleSubmit}>
+              <div className="login-field">
+                <label htmlFor="businessId">Business ID</label>
+                <input
+                  id="businessId"
+                  value={businessId}
+                  onChange={(event) => setBusinessId(event.target.value)}
+                  required
+                  minLength={3}
+                  maxLength={64}
+                  autoComplete="organization"
+                  placeholder="branch-yourbusiness"
+                />
+              </div>
+
               <div className="login-field">
                 <label htmlFor="adminCode">Admin Code</label>
                 <input

@@ -177,6 +177,7 @@ export type OrganizationSummary = {
   trialStartedAt: string;
   trialEndsAt: string;
   daysRemaining: number;
+  branchIds: string[];
 };
 
 export type AuthLoginResponse = {
