@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BigstopPOS.Application/BigstopPOS.Application.csproj" />
+    <Project Path="src/BigstopPOS.Contracts/BigstopPOS.Contracts.csproj" />
+    <Project Path="src/BigstopPOS.Domain/BigstopPOS.Domain.csproj" />
+    <Project Path="src/BigstopPOS.Mobile/BigstopPOS.Mobile.csproj" />
+    <Project Path="src/BigstopPOS.Platform/BigstopPOS.Platform.csproj" />
+    <Project Path="src/BigstopPOS.Windows/BigstopPOS.Windows.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BigstopPOS.Platform.Tests/BigstopPOS.Platform.Tests.csproj" />
+  </Folder>
+</Solution>

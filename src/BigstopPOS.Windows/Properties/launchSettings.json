@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "BigstopPOS.Windows (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "BigstopPOS.Windows (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

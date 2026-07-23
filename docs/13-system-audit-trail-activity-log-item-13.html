@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Item 13 - System Audit Trail / Activity Log</title>
+  <style>
+    @page { size: A4 landscape; margin: 14mm; }
+    body { font-family: Arial, sans-serif; color: #111; line-height: 1.35; }
+    h1 { font-size: 18pt; margin: 0 0 6px; }
+    h2 { font-size: 13pt; margin: 0 0 10px; }
+    h3 { font-size: 11.5pt; margin: 10px 0 6px; }
+    p, li { font-size: 9.5pt; }
+    table { width: 100%; border-collapse: collapse; font-size: 8.8pt; }
+    th, td { border: 1px solid #555; padding: 5px; vertical-align: top; }
+    th { background: #efefef; text-align: left; }
+    .muted { color: #444; }
+  </style>
+</head>
+<body>
+  <h1>BIGTIME POS</h1>
+  <h2>Item 13 Compliance Sample - Printed copy of System Audit Trail / Activity Log</h2>
+
+  <p><strong>Requirement covered:</strong> <span class="muted">"13. Printed copy of System audit trail or activity log containing Date and Time Stamp, User Name/ ID, Activity Performed, and Values of Data Involved in the Activity;"</span></p>
+  <p>Prepared on: April 14, 2026 | System: BIGTIME POS</p>
+
+  <h3>Audit Trail Format (Sample Printout)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Date &amp; Time (PHT)</th>
+        <th>User Name / ID</th>
+        <th>Module / Screen</th>
+        <th>Activity Performed</th>
+        <th>Values of Data Involved</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>2026-04-14 08:12:09</td><td>Maria Santos / EMP-1001</td><td>Cashier Login</td><td>User login success</td><td>Branch=branch-manila; Mode=Online; Terminal=POS-WIN-01</td></tr>
+      <tr><td>2026-04-14 08:15:33</td><td>Maria Santos / EMP-1001</td><td>Shift Management</td><td>Open shift</td><td>ShiftNo=S-20260414-001; OpeningCash=2000.00</td></tr>
+      <tr><td>2026-04-14 08:21:46</td><td>Maria Santos / EMP-1001</td><td>Sales</td><td>Added item to cart</td><td>SKU=BG-CAFE-LATTE-240; Qty=1; UnitPrice=79.00</td></tr>
+      <tr><td>2026-04-14 08:22:05</td><td>Maria Santos / EMP-1001</td><td>Sales / Discount</td><td>Applied discount</td><td>Type=SC; Rate=20%; DiscountAmount=15.80</td></tr>
+      <tr><td>2026-04-14 08:22:58</td><td>Maria Santos / EMP-1001</td><td>Payment</td><td>Completed cash payment</td><td>Subtotal=79.00; Discount=15.80; Net=63.20; Tendered=100.00; Change=36.80</td></tr>
+      <tr><td>2026-04-14 08:23:01</td><td>Maria Santos / EMP-1001</td><td>Receipts</td><td>SI/OR generated</td><td>ORNo=OR-20260414-000128; TxnId=TXN-9A72C4</td></tr>
+      <tr><td>2026-04-14 08:23:20</td><td>Maria Santos / EMP-1001</td><td>Receipts</td><td>Receipt reprint</td><td>ORNo=OR-20260414-000128; Reason=Customer copy request</td></tr>
+      <tr><td>2026-04-14 09:10:11</td><td>Juan Dela Cruz / MGR-2001</td><td>Inventory</td><td>Updated item stock</td><td>SKU=BG-CAFE-LATTE-240; OldStock=55; NewStock=60; Reason=Delivery</td></tr>
+      <tr><td>2026-04-14 09:32:44</td><td>Juan Dela Cruz / MGR-2001</td><td>Sales Adjustment</td><td>Void transaction</td><td>ORNo=OR-20260414-000131; Reason=Wrong item encoded; Status=Voided</td></tr>
+      <tr><td>2026-04-14 17:58:31</td><td>Maria Santos / EMP-1001</td><td>End of Day</td><td>Generated X-Reading</td><td>XReadingNo=X-20260414-01; GrossSales=12480.00</td></tr>
+      <tr><td>2026-04-14 18:10:07</td><td>Juan Dela Cruz / MGR-2001</td><td>End of Day</td><td>Generated Z-Reading</td><td>ZReadingNo=Z-20260414-01; GrossSales=28750.00; NetSales=25920.00</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Checklist Completeness</h3>
+  <ol>
+    <li>Date and Time Stamp: Included</li>
+    <li>User Name / ID: Included</li>
+    <li>Activity Performed: Included</li>
+    <li>Values of Data Involved: Included</li>
+  </ol>
+
+  <p class="muted">This sample is formatted for printing and filing under Item 13 in Annex B submission. Actual export from BIGTIME POS audit log/report module may be attached together with this cover/sample format.</p>
+</body>
+</html>

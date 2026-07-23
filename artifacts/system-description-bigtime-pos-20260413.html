@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BIGTIME POS System Description</title>
+  <style>:root {
+  --bg: #f3f6fb;
+  --page: #ffffff;
+  --ink: #172033;
+  --muted: #55627a;
+  --line: #d8e0ec;
+  --accent: #214f9a;
+  --accent-soft: #eaf1fb;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Segoe UI", Arial, sans-serif; line-height: 1.6; }
+main { width: 8.27in; margin: 28px auto; background: var(--page); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 10px 40px rgba(23, 32, 51, 0.08); padding: 56px 64px; }
+h1, h2, h3, h4 { color: var(--ink); margin-top: 0; }
+h1 { font-size: 30px; line-height: 1.2; margin-bottom: 12px; }
+h2 { font-size: 22px; margin-top: 30px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+h3 { font-size: 18px; margin-top: 22px; margin-bottom: 8px; }
+h4 { font-size: 15px; margin-top: 18px; margin-bottom: 6px; color: var(--accent); }
+p, li { font-size: 14px; }
+p { margin: 0 0 12px; }
+ul, ol { margin: 0 0 14px 22px; padding: 0; }
+li { margin-bottom: 6px; }
+code { font-family: Consolas, "Courier New", monospace; background: var(--accent-soft); color: var(--accent); padding: 2px 6px; border-radius: 6px; font-size: 12px; }
+blockquote { margin: 16px 0; padding: 12px 16px; background: #fafcff; border-left: 4px solid var(--accent); color: var(--muted); }
+.header-note { margin-bottom: 20px; padding: 14px 16px; background: linear-gradient(135deg, #eef4ff, #f8fbff); border: 1px solid var(--line); border-radius: 14px; color: var(--muted); font-size: 13px; }
+@page { size: A4; margin: 16mm; }
+@media print { body { background: #fff; } main { width: auto; margin: 0; border: none; border-radius: 0; box-shadow: none; padding: 0; } }</style>
+</head>
+<body>
+  <main>
+    <div class="header-note">Prepared from the current BIGTIME POS repository implementation as of April 13, 2026.</div>
+    <h1 id="bigtime-pos-system-description">BIGTIME POS System Description</h1>
+<p>Prepared on: April 13, 2026<br />
+System name: BIGTIME POS<br />
+Document purpose: Formal description of the full BIGTIME POS platform, covering the dashboard, central API, database services, and Android/Windows cashier terminal application.</p>
+<h2 id="executive-summary">1. Executive Summary</h2>
+<p>BIGTIME POS is an integrated point-of-sale and back-office management system designed for retail and cashiering operations. The platform is composed of:</p>
+<ul>
+<li>a web-based back-office dashboard for administrators and authorized office users</li>
+<li>a central server API that handles authentication, business rules, transaction processing, reporting, and compliance services</li>
+<li>a POS terminal application built in Flutter for Android and Windows cashier terminals</li>
+<li>central data services for persistent records, synchronization, and operational messaging</li>
+</ul>
+<p>The system supports day-to-day selling, cashier shift management, item and inventory administration, payment processing, receipt issuance, report generation, audit visibility, and offline transaction continuity for the POS terminal.</p>
+<h2 id="system-scope">2. System Scope</h2>
+<p>The BIGTIME POS platform is intended to manage retail sales operations from back-office setup to front-counter transaction completion. It covers:</p>
+<ul>
+<li>dashboard-based administration and maintenance of master data</li>
+<li>cashier login and shift operations</li>
+<li>selling, cart, payment, and receipt generation</li>
+<li>transaction synchronization between terminal and server</li>
+<li>inventory and catalog management</li>
+<li>employee and POS user administration</li>
+<li>BIR-related and EIS-related reporting functions</li>
+<li>customer-facing display support</li>
+</ul>
+<p>The current implementation is organized as a monorepo with these major applications:</p>
+<ul>
+<li><code>apps/dashboard-react</code></li>
+<li><code>apps/api-nestjs</code></li>
+<li><code>apps/pos-flutter</code></li>
+<li><code>packages/shared-types</code></li>
+</ul>
+<h2 id="system-architecture">3. System Architecture</h2>
+<h3 id="high-level-architecture">3.1 High-Level Architecture</h3>
+<p>BIGTIME POS follows a multi-application client-server architecture.</p>
+<ul>
+<li>The dashboard is a browser-based React application used by administrators and back-office personnel.</li>
+<li>The API is a NestJS server that exposes authenticated endpoints for POS operations, dashboard management, sync, reports, and compliance-related functions.</li>
+<li>The POS terminal is a Flutter application used by cashiers on Android tablets or Windows terminals.</li>
+<li>PostgreSQL serves as the central database for transactional and master records.</li>
+<li>Redis supports queueing and related runtime infrastructure.</li>
+<li>The POS terminal maintains a local SQLite database using Drift for offline continuity and queued sync records.</li>
+</ul>
+<h3 id="central-components">3.2 Central Components</h3>
+<h4 id="a.dashboard-application">A. Dashboard Application</h4>
+<p>The dashboard provides administrative access to operational data and system management functions. Based on the current implementation, the dashboard includes routes and modules for:</p>
+<ul>
+<li>Dashboard overview</li>
+<li>Receipts</li>
+<li>Catalog</li>
+<li>Listing maintenance:
+<ul>
+<li>items</li>
+<li>categories</li>
+<li>category groups</li>
+<li>discounts</li>
+<li>taxes</li>
+<li>payment methods</li>
+</ul>
+</li>
+<li>Inventory:
+<ul>
+<li>warehouse</li>
+<li>item stocks</li>
+<li>item transfers</li>
+<li>CSV import</li>
+<li>suppliers</li>
+<li>purchase orders</li>
+</ul>
+</li>
+<li>Reports:
+<ul>
+<li>sales</li>
+<li>branch comparison</li>
+<li>shift</li>
+<li>cash balancing</li>
+<li>reference number</li>
+<li>expiration date</li>
+<li>discount</li>
+<li>pull-out</li>
+<li>BIR taxes</li>
+<li>BIR terminal report</li>
+<li>BIR eSales / EIS</li>
+</ul>
+</li>
+<li>Employees:
+<ul>
+<li>employees</li>
+<li>work hours</li>
+<li>time card</li>
+</ul>
+</li>
+<li>Settings</li>
+<li>POS users</li>
+<li>Account</li>
+</ul>
+<h4 id="b.central-api">B. Central API</h4>
+<p>The API is the core business layer of the system. It currently contains modules for:</p>
+<ul>
+<li>account</li>
+<li>auth</li>
+<li>bir</li>
+<li>catalog</li>
+<li>customer-display</li>
+<li>eis</li>
+<li>employees</li>
+<li>inventory</li>
+<li>payments</li>
+<li>pos</li>
+<li>pricing</li>
+<li>reports</li>
+<li>sync</li>
+</ul>
+<p>Additional infrastructure in the API includes:</p>
+<ul>
+<li>Prisma for database access</li>
+<li>Redis-backed queue infrastructure</li>
+<li>realtime gateway support</li>
+<li>global validation, throttling, and security middleware</li>
+</ul>
+<h4 id="c.pos-terminal-application">C. POS Terminal Application</h4>
+<p>The POS terminal is the cashier-facing application. Based on the current app flow, the terminal progresses through these main stages:</p>
+<ul>
+<li>Login</li>
+<li>Open Shift</li>
+<li>Selling</li>
+<li>Payment</li>
+<li>Receipt</li>
+</ul>
+<p>Major POS functional areas in the Flutter app include:</p>
+<ul>
+<li>authentication</li>
+<li>app flow control</li>
+<li>catalog access and selling workspace</li>
+<li>customer display</li>
+<li>shift management</li>
+<li>payment and receipt flow</li>
+<li>local queue and sync operations</li>
+</ul>
+<h2 id="users-and-access-levels">4. Users and Access Levels</h2>
+<p>The platform supports multiple user types depending on operational responsibilities.</p>
+<h3 id="cashier">4.1 Cashier</h3>
+<p>The cashier uses the POS terminal application to:</p>
+<ul>
+<li>log in using employee code and PIN</li>
+<li>open a shift with an opening cash float</li>
+<li>add items to cart</li>
+<li>accept payment</li>
+<li>issue receipts</li>
+<li>reprint or email receipts where supported</li>
+<li>close the shift and perform cash reconciliation</li>
+</ul>
+<h3 id="supervisor-or-manager">4.2 Supervisor or Manager</h3>
+<p>Supervisory users may be involved in:</p>
+<ul>
+<li>variance approval during shift close</li>
+<li>operational review of transactions</li>
+<li>oversight of staff and terminal activity</li>
+<li>review of compliance-related outputs</li>
+</ul>
+<h3 id="administrator-back-office-user">4.3 Administrator / Back-Office User</h3>
+<p>The dashboard is intended for administrative or authorized users who manage:</p>
+<ul>
+<li>catalog and listing data</li>
+<li>inventory and stock operations</li>
+<li>employee and POS user records</li>
+<li>reports and monitoring</li>
+<li>BIR and EIS-related views</li>
+<li>customer display settings and operational configuration</li>
+</ul>
+<h2 id="functional-description-by-layer">5. Functional Description by Layer</h2>
+<h3 id="dashboard-layer">5.1 Dashboard Layer</h3>
+<p>The dashboard is the management interface of BIGTIME POS. It is used to maintain centralized data and review operational outputs generated by the cashier terminals and API.</p>
+<p>Its functional responsibilities include:</p>
+<ul>
+<li>authentication of authorized back-office users</li>
+<li>viewing operational summaries and receipts</li>
+<li>maintenance of item catalog, categories, taxes, discounts, and payment methods</li>
+<li>inventory monitoring and stock workflows</li>
+<li>employee and POS user administration</li>
+<li>report access for sales and statutory review</li>
+<li>BIR and EIS monitoring functions</li>
+<li>settings and customer display configuration</li>
+</ul>
+<p>The dashboard consumes server APIs and reflects centrally stored data. It does not operate as a standalone terminal and is dependent on the API and central database.</p>
+<h3 id="api-and-business-logic-layer">5.2 API and Business Logic Layer</h3>
+<p>The API is responsible for enforcing business rules and serving as the integration point for both the dashboard and cashier terminal.</p>
+<p>Its main functions include:</p>
+<ul>
+<li>user authentication and token handling</li>
+<li>role-based protection of protected resources</li>
+<li>transaction posting and receipt numbering</li>
+<li>payment recording</li>
+<li>synchronization intake for offline POS activity</li>
+<li>report generation and compliance-related endpoints</li>
+<li>catalog, pricing, and inventory services</li>
+<li>employee and user management</li>
+<li>audit visibility and receipt event logging</li>
+<li>customer display and realtime support</li>
+</ul>
+<p>The API serves as the authoritative source of official transaction data whenever the terminal is online.</p>
+<h3 id="pos-terminal-layer">5.3 POS Terminal Layer</h3>
+<p>The POS terminal is optimized for cashier operations and is designed to continue functioning even when connectivity is temporarily unavailable.</p>
+<p>The POS application performs the following:</p>
+<ul>
+<li>authenticates the cashier</li>
+<li>stores shift opening information locally</li>
+<li>reads catalog data from local cache</li>
+<li>builds carts and computes amounts on the device</li>
+<li>processes payment input</li>
+<li>issues receipts</li>
+<li>stores transaction and event data in the local queue when offline</li>
+<li>synchronizes queued records to the server when connectivity is restored</li>
+</ul>
+<p>The POS app also contains hardware integration hooks for:</p>
+<ul>
+<li>receipt printing</li>
+<li>cash drawer pulse</li>
+<li>customer-facing display control</li>
+</ul>
+<h2 id="end-to-end-operational-flow">6. End-to-End Operational Flow</h2>
+<h3 id="master-data-preparation">6.1 Master Data Preparation</h3>
+<p>Before daily selling begins, master records such as items, categories, taxes, discounts, payment methods, and inventory-related data are maintained through the dashboard. These records are stored in the central database and are later consumed by the POS terminal through server synchronization.</p>
+<h3 id="cashier-login">6.2 Cashier Login</h3>
+<p>The cashier opens the POS application and enters an employee code and PIN. The terminal calls the authentication endpoint of the API. If credentials and permissions are valid, the terminal receives authenticated session context and proceeds to shift opening.</p>
+<h3 id="shift-opening">6.3 Shift Opening</h3>
+<p>The cashier enters the opening cash float. The terminal records the shift locally and queues the shift event for synchronization. When online, the terminal attempts to upload the shift information to the server immediately.</p>
+<h3 id="selling-and-cart-build">6.4 Selling and Cart Build</h3>
+<p>The selling screen uses locally cached catalog data for responsive operation. The cashier may search by item name, SKU, or barcode, and may adjust quantities before charging the cart. Pricing, totals, and VAT computations are performed in the app based on the loaded cart state and current item data.</p>
+<h3 id="payment">6.5 Payment</h3>
+<p>The payment screen supports payment method selection and amount capture. Based on the current implementation, payment methods include:</p>
+<ul>
+<li>Cash</li>
+<li>Card</li>
+<li>GCash</li>
+<li>Maya</li>
+<li>Split</li>
+</ul>
+<p>For cash payments, the tendered amount is entered and change is computed. For non-cash methods, the terminal can capture reference-related information as required.</p>
+<h3 id="receipt-issuance">6.6 Receipt Issuance</h3>
+<p>If the terminal is online:</p>
+<ul>
+<li>the POS app sends the transaction to the API</li>
+<li>the server records the transaction centrally</li>
+<li>the server returns the official transaction identifier, OR number, and reference number</li>
+</ul>
+<p>If the terminal is offline or the live server path cannot be completed:</p>
+<ul>
+<li>the POS app generates a local provisional transaction record</li>
+<li>the transaction is saved to the local sync queue</li>
+<li>once the terminal reconnects, the queued record is uploaded</li>
+<li>the server reconciles the local record and returns the final identifiers and receipt information</li>
+</ul>
+<p>This design allows selling continuity while preserving later reconciliation to server-issued records.</p>
+<h3 id="receipt-actions-and-audit-visibility">6.7 Receipt Actions and Audit Visibility</h3>
+<p>After sale completion, the terminal can perform receipt-related actions such as print, reprint, and other receipt events supported by the platform. These events are queued and synchronized so that the backend has a visible audit trail of receipt-related activity.</p>
+<h3 id="shift-close-and-reconciliation">6.8 Shift Close and Reconciliation</h3>
+<p>At end of shift, the terminal computes expected cash based on opening cash and sales activity. The cashier enters the blind count. If configured thresholds are exceeded, supervisor or manager intervention may be required. The shift-close data is recorded locally and synchronized to the server when possible.</p>
+<h3 id="dashboard-monitoring-and-reporting">6.9 Dashboard Monitoring and Reporting</h3>
+<p>Once data is in the central system, the dashboard provides access to receipts, sales data, inventory views, employee-related views, and reports. The dashboard becomes the back-office reporting and management layer for transactions generated by the POS terminals.</p>
+<h2 id="data-storage-and-records">7. Data Storage and Records</h2>
+<h3 id="central-database">7.1 Central Database</h3>
+<p>The central database uses PostgreSQL. Based on the Prisma schema, the central data model includes records such as:</p>
+<ul>
+<li>branches</li>
+<li>users</li>
+<li>terminals</li>
+<li>shifts</li>
+<li>category groups</li>
+<li>categories</li>
+<li>items</li>
+<li>item variants</li>
+<li>taxes</li>
+<li>discounts</li>
+<li>transactions</li>
+<li>transaction items</li>
+<li>payments</li>
+<li>inventory and stock movement-related records</li>
+<li>employees and related work records</li>
+</ul>
+<p>The central database acts as the primary permanent record for official operational data.</p>
+<h3 id="local-pos-database">7.2 Local POS Database</h3>
+<p>The POS application uses a local SQLite database through Drift. The local database currently contains tables for:</p>
+<ul>
+<li><code>catalog_cache_items</code></li>
+<li><code>sync_queue_entries</code></li>
+<li><code>shift_sessions</code></li>
+</ul>
+<p>This local database supports:</p>
+<ul>
+<li>fast local item lookup</li>
+<li>terminal continuity during connectivity interruptions</li>
+<li>deferred upload of pending records</li>
+<li>temporary retention of shift and sync state</li>
+</ul>
+<h3 id="queue-and-runtime-infrastructure">7.3 Queue and Runtime Infrastructure</h3>
+<p>Redis is used as part of the server runtime infrastructure. The current deployment uses Redis with append-only persistence enabled. Queue and realtime components support background processing and operational messaging inside the system.</p>
+<h2 id="security-and-control-features">8. Security and Control Features</h2>
+<p>Based on the current implementation and supporting documentation, BIGTIME POS includes the following control features:</p>
+<ul>
+<li>JWT-based authentication for protected API routes</li>
+<li>refresh-token handling for authenticated sessions</li>
+<li>role-based access control</li>
+<li>route protection for dashboard access</li>
+<li>request validation using DTO validation and whitelist enforcement</li>
+<li>throttling and abuse protection</li>
+<li>security middleware such as Helmet</li>
+<li>hashed PIN handling for managed user credentials</li>
+<li>traceability for transactions, receipts, and sync-related records</li>
+<li>idempotent sync handling and retry controls for queued data</li>
+</ul>
+<p>These controls are intended to reduce unauthorized access, malformed requests, duplicate sync uploads, and untracked transaction actions.</p>
+<h2 id="network-and-offline-behavior">9. Network and Offline Behavior</h2>
+<p>BIGTIME POS is designed for mixed online and offline operation.</p>
+<h3 id="online-operation">9.1 Online Operation</h3>
+<p>During normal connected operation:</p>
+<ul>
+<li>the dashboard reads and updates central records through the API</li>
+<li>the POS terminal authenticates against the API</li>
+<li>transactions are posted directly to the server</li>
+<li>official references and OR values are returned immediately</li>
+<li>reports and dashboards reflect centrally stored records</li>
+</ul>
+<h3 id="offline-pos-operation">9.2 Offline POS Operation</h3>
+<p>If the POS terminal loses connectivity:</p>
+<ul>
+<li>local cached catalog data continues to support selling</li>
+<li>transactions and shift events are stored in the local queue</li>
+<li>receipt-related events remain locally recordable</li>
+<li>queued records are uploaded once connectivity is restored</li>
+</ul>
+<p>This enables continuity at the cashier terminal while preserving a later synchronization path to the central server.</p>
+<h2 id="backup-recovery-and-continuity">10. Backup, Recovery, and Continuity</h2>
+<h3 id="central-backup-scope">10.1 Central Backup Scope</h3>
+<p>For operational continuity, the central backup scope should include:</p>
+<ul>
+<li>PostgreSQL data</li>
+<li>Redis runtime persistence where operationally required</li>
+<li>application configuration and environment files used for deployment</li>
+<li>generated reports or exported compliance files retained outside the database, if any</li>
+</ul>
+<p>In the current local deployment, PostgreSQL and Redis are persisted through Docker volumes:</p>
+<ul>
+<li><code>bigtime_pos_postgres_data</code></li>
+<li><code>bigtime_pos_redis_data</code></li>
+</ul>
+<h3 id="pos-terminal-backup-scope">10.2 POS Terminal Backup Scope</h3>
+<p>For terminal continuity, the local POS database file should be included in device-level backup or controlled retrieval procedures. The existing documentation identifies the local SQLite database as:</p>
+<ul>
+<li><code>apex_pos.sqlite</code> in the app documents directory</li>
+</ul>
+<p>This local file contains cached catalog data, queued sync entries, and local shift session data needed for terminal continuity.</p>
+<h3 id="recovery-approach">10.3 Recovery Approach</h3>
+<p>In a recovery scenario, the recommended restoration sequence is:</p>
+<ol>
+<li>restore the central database and required runtime services</li>
+<li>restore deployment configuration and start the API</li>
+<li>restore and start the dashboard application</li>
+<li>relaunch POS terminals</li>
+<li>allow terminals to reconnect and upload pending local queue entries</li>
+</ol>
+<p>Because the POS app maintains local queue records, pending terminal transactions can be synchronized after the server environment becomes available again, subject to the integrity of the local terminal database.</p>
+<h2 id="deployment-and-runtime-environment">11. Deployment and Runtime Environment</h2>
+<p>The current workspace supports these main runtime components:</p>
+<ul>
+<li>API server: <code>apps/api-nestjs</code></li>
+<li>Dashboard web app: <code>apps/dashboard-react</code></li>
+<li>POS terminal app: <code>apps/pos-flutter</code></li>
+<li>Central PostgreSQL database</li>
+<li>Redis service</li>
+</ul>
+<p>In the current local environment:</p>
+<ul>
+<li>the API default base path is <code>http://localhost:3000/api</code></li>
+<li>the dashboard runs as a browser-based React application</li>
+<li>PostgreSQL is exposed on local port <code>54329</code></li>
+<li>Redis is exposed on local port <code>6380</code></li>
+</ul>
+<p>The POS terminal can run on:</p>
+<ul>
+<li>Android tablets</li>
+<li>Windows terminal devices</li>
+</ul>
+<h2 id="summary">12. Summary</h2>
+<p>BIGTIME POS is a full-stack retail transaction system composed of a web dashboard, a central API, and a cashier terminal application for Android and Windows. The dashboard manages setup, administration, and reporting. The API handles authentication, transaction logic, synchronization, and centralized records. The POS terminal supports cashier workflows, receipt issuance, and offline continuity through local storage and sync queueing.</p>
+<p>Taken together, these components provide one integrated system from back-office management down to front-counter transaction execution and receipt generation.</p>
+
+  </main>
+</body>
+</html>

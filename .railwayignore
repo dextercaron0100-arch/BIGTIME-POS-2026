@@ -1,0 +1,22 @@
+node_modules/
+apps/api-nestjs/node_modules/
+apps/dashboard-react/node_modules/
+packages/shared-types/node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.log
+
+apps/api-nestjs/storage/*
+!apps/api-nestjs/storage/.gitkeep
+
+# Not needed to build/run the API
+apps/pos-flutter/
+docs/
+artifacts/
+deploy-staging/
+docker/
+*.pdf
+*.png

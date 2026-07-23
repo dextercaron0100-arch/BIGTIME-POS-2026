@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build:shared && npm run build:dashboard",
+  "outputDirectory": "apps/dashboard-react/dist"
+}

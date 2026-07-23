@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Item 14 - Backup Procedure and Disaster Recovery Plan</title>
+  <style>
+    @page { size: A4; margin: 20mm; }
+    body { font-family: Arial, sans-serif; color: #111; line-height: 1.45; }
+    h1 { font-size: 20pt; margin: 0 0 8px; }
+    h2 { font-size: 15pt; margin: 16px 0 10px; }
+    h3 { font-size: 12.5pt; margin: 12px 0 8px; }
+    h4 { font-size: 11.5pt; margin: 10px 0 6px; }
+    p, li { font-size: 11pt; }
+    .muted { color: #444; }
+    ul, ol { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <h1>BIGTIME POS</h1>
+  <h2>Item 14 Compliance Sample</h2>
+  <h3>Narrative Back-up Procedure and Disaster Recovery Plan (DRP)</h3>
+
+  <p><strong>Requirement covered:</strong></p>
+  <p class="muted">"14. Narrative Back-up Procedure and Disaster Recovery Plan (DRP); and"</p>
+  <p>Prepared on: April 15, 2026<br/>System: BIGTIME POS</p>
+
+  <h2>1. Purpose</h2>
+  <p>This document describes the back-up procedure and disaster recovery plan for BIGTIME POS. It is intended to show how operational and transaction data may be protected, restored, and validated in the event of system failure, connectivity interruption, hardware malfunction, or other operational disruption.</p>
+
+  <h2>2. System Components Covered</h2>
+  <ul>
+    <li>central API services</li>
+    <li>central PostgreSQL database</li>
+    <li>Redis-backed queue or runtime infrastructure</li>
+    <li>POS terminal local data used for offline continuity</li>
+    <li>exported reports and compliance-related files</li>
+    <li>system configuration records and branch-specific operational settings</li>
+  </ul>
+
+  <h2>3. Backup Procedure</h2>
+  <h3>3.1 Central Database Backup</h3>
+  <ol>
+    <li>Scheduled full database backup at the end of each business day.</li>
+    <li>Additional periodic backup during the day based on transaction volume and store policy.</li>
+    <li>Secure storage of backup files in designated backup media or server storage.</li>
+    <li>Retention of backup generations according to company policy and statutory record-keeping requirements.</li>
+  </ol>
+  <p>Recommended captured records include sales transactions, receipts/invoices, inventory/listing data, employee/POS user records, audit trail, and report history.</p>
+
+  <h3>3.2 Application and Configuration Backup</h3>
+  <p>System configuration and reference data should also be preserved, including branch settings, BIR-related settings, report/export templates, and deployment configuration.</p>
+
+  <h3>3.3 POS Local Continuity Data</h3>
+  <p>BIGTIME POS supports local queued records for temporary offline continuity. Transaction and shift-related data may be stored locally until synchronization is completed, and should be protected through device-level controls and controlled recovery procedures.</p>
+
+  <h3>3.4 Export and Document Backup</h3>
+  <p>Generated reports, audit extracts, statutory sample printouts, and submission artifacts should be copied to protected storage or backup media after creation.</p>
+
+  <h2>4. Disaster Recovery Plan</h2>
+  <h3>4.1 Objective</h3>
+  <p>The disaster recovery objective is to restore BIGTIME POS operations with minimal data loss and acceptable downtime while preserving transaction integrity and required business records.</p>
+
+  <h3>4.2 Common Disaster Scenarios</h3>
+  <ul>
+    <li>server outage</li>
+    <li>database corruption</li>
+    <li>network interruption</li>
+    <li>POS terminal failure</li>
+    <li>printer or peripheral failure</li>
+    <li>accidental data deletion</li>
+    <li>power interruption affecting store operations</li>
+  </ul>
+
+  <h3>4.3 Recovery Strategy by Scenario</h3>
+  <h4>A. Server or API Outage</h4>
+  <ol>
+    <li>Confirm server or hosting issue.</li>
+    <li>Restore API service from the latest working deployment or standby environment.</li>
+    <li>Validate application health and API accessibility.</li>
+    <li>Restore database from the most recent valid backup if required.</li>
+    <li>Reconnect dashboard and POS clients and verify transaction flow.</li>
+  </ol>
+
+  <h4>B. Database Failure or Corruption</h4>
+  <ol>
+    <li>Stop write operations to prevent further inconsistency.</li>
+    <li>Identify last clean backup set.</li>
+    <li>Restore database to the latest valid recovery point.</li>
+    <li>Validate core records such as receipts, shifts, inventory, and users.</li>
+    <li>Resume application access only after integrity checks are completed.</li>
+  </ol>
+
+  <h4>C. Network Interruption</h4>
+  <ol>
+    <li>Continue selling through offline-capable POS workflow where enabled.</li>
+    <li>Preserve locally queued transactions on the POS terminal.</li>
+    <li>Restore network connectivity.</li>
+    <li>Trigger or monitor synchronization of queued records to central services.</li>
+    <li>Verify successful upload and reconciliation of stored transactions.</li>
+  </ol>
+
+  <h4>D. POS Terminal Device Failure</h4>
+  <ol>
+    <li>Isolate the affected terminal.</li>
+    <li>Replace or repair the device.</li>
+    <li>Reinstall or relaunch the POS application on the replacement device.</li>
+    <li>Reconnect to central services and validate user login and selling functions.</li>
+    <li>Recover local continuity data if available and applicable.</li>
+  </ol>
+
+  <h2>5. Recovery Validation</h2>
+  <ul>
+    <li>user login works correctly</li>
+    <li>catalog and pricing data are available</li>
+    <li>sales transaction posting succeeds</li>
+    <li>receipt generation works correctly</li>
+    <li>X-reading and Z-reading can be generated</li>
+    <li>audit and report views remain accessible</li>
+    <li>synchronized records match expected transaction counts</li>
+  </ul>
+
+  <h2>6. Roles and Responsibilities</h2>
+  <ul>
+    <li>System Administrator / Technical Support: perform backup scheduling, restore actions, and environment validation</li>
+    <li>Store Supervisor / Manager: report incidents, validate restored operations, and reconcile store activity</li>
+    <li>Cashier: follow offline continuity procedures and report terminal or printer issues immediately</li>
+  </ul>
+
+  <h2>7. Operational Notes</h2>
+  <ul>
+    <li>Backup logs and restore actions should be documented.</li>
+    <li>Access to backups should be restricted to authorized personnel.</li>
+    <li>Recovery testing should be performed periodically to confirm that backup files are usable.</li>
+    <li>Store-level SOP should define communication, escalation, and sign-off steps after a recovery event.</li>
+  </ul>
+
+  <h2>8. Document Purpose</h2>
+  <p>This narrative back-up procedure and disaster recovery plan is prepared as the Item 14 attachment for Annex B submission and describes the recommended backup and recovery controls for BIGTIME POS operations.</p>
+</body>
+</html>

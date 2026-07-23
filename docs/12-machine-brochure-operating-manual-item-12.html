@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Item 12 - Machine Brochure / Operating Manual</title>
+  <style>
+    @page { size: A4; margin: 20mm; }
+    body { font-family: Arial, sans-serif; color: #111; line-height: 1.45; }
+    h1 { font-size: 20pt; margin: 0 0 8px; }
+    h2 { font-size: 15pt; margin: 16px 0 10px; }
+    h3 { font-size: 12.5pt; margin: 0 0 10px; }
+    p, li { font-size: 11pt; }
+    .muted { color: #444; }
+    ul, ol { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <h1>BIGTIME POS</h1>
+  <h2>Item 12 Compliance Sample</h2>
+  <h3>Machine Brochure / Operating Manual (if applicable)</h3>
+
+  <p><strong>Requirement covered:</strong></p>
+  <p class="muted">"12. Machine brochure/ Operating manual, if applicable;"</p>
+  <p>Prepared on: April 14, 2026<br/>System: BIGTIME POS</p>
+
+  <h2>1. System Overview</h2>
+  <p>BIGTIME POS is a point-of-sale system composed of POS Terminal App, Back-office Dashboard, and Central API/database services.</p>
+  <ul>
+    <li>Cashier login and shift handling</li>
+    <li>Item selling and payment capture</li>
+    <li>SI/OR receipt issuance and printing</li>
+    <li>Discounts and adjustments (void/return/refund workflows)</li>
+    <li>Inventory and reporting management</li>
+    <li>Online/offline operational continuity</li>
+  </ul>
+
+  <h2>2. Minimum Operating Requirements</h2>
+  <p><strong>POS Terminal:</strong> Windows or Android device, printer connection, and local storage for offline queue.</p>
+  <p><strong>Back Office:</strong> modern browser and network access to API/server.</p>
+
+  <h2>3. Basic Operating Procedure (Cashier)</h2>
+  <ol>
+    <li>Launch BIGTIME POS terminal application.</li>
+    <li>Confirm indicator: <strong>Network Ready</strong> (online) or <strong>Offline Mode</strong> (offline).</li>
+    <li>Enter employee code and PIN to log in.</li>
+    <li>Open shift (if prompted).</li>
+    <li>Scan/search items and build transaction.</li>
+    <li>Apply discounts where applicable.</li>
+    <li>Select payment method and confirm payment.</li>
+    <li>Print/reprint receipt as needed.</li>
+    <li>Perform end-of-shift procedures and generate X/Z reading.</li>
+  </ol>
+
+  <h2>4. Online and Offline Operations</h2>
+  <p><strong>Online mode:</strong> Transactions are sent to server services in real time and records update immediately.</p>
+  <p><strong>Offline mode:</strong> Transactions are queued locally and synced after reconnection.</p>
+
+  <h2>5. Daily Operations and Reports</h2>
+  <ul>
+    <li>X-Reading (cashier accountability)</li>
+    <li>Z-Reading (end-of-day report)</li>
+    <li>Sales summaries and discount breakdown reports</li>
+    <li>Adjustment-related transaction documents (void/return/refund)</li>
+  </ul>
+
+  <h2>6. Safety, Backup, and Continuity Notes</h2>
+  <ul>
+    <li>Keep user credentials confidential.</li>
+    <li>Restrict terminal usage to authorized users.</li>
+    <li>Ensure regular backup of server data and report exports.</li>
+    <li>Follow SOP for power interruption and network outage handling.</li>
+  </ul>
+
+  <h2>7. Troubleshooting Quick Guide</h2>
+  <ol>
+    <li>Cannot log in: verify credentials and server/network availability.</li>
+    <li>Printer not printing: check power, connection, paper, and retry print.</li>
+    <li>Network unavailable: continue in offline mode and monitor sync after reconnect.</li>
+  </ol>
+
+  <h2>8. Document Purpose</h2>
+  <p>This operating manual is prepared as the Item 12 attachment for Annex B submission and serves as a practical usage reference for BIGTIME POS operation.</p>
+</body>
+</html>

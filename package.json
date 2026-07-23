@@ -1,0 +1,24 @@
+{
+  "name": "apex-pos-workspace",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/api-nestjs",
+    "apps/dashboard-react",
+    "packages/shared-types"
+  ],
+  "scripts": {
+    "build": "npm run build -w @apex-pos/shared-types && npm run build -w @apex-pos/api && npm run build -w @apex-pos/dashboard",
+    "build:api": "npm run build -w @apex-pos/api",
+    "build:dashboard": "npm run build -w @apex-pos/dashboard",
+    "build:shared": "npm run build -w @apex-pos/shared-types",
+    "dev:api": "npm run start:dev -w @apex-pos/api",
+    "dev:dashboard": "npm run dev -w @apex-pos/dashboard",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "security:audit": "npm audit --omit=dev --audit-level=high"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

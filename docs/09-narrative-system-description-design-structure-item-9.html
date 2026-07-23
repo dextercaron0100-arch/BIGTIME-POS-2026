@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Item 9 - Narrative System Description and Design Structure</title>
+  <style>
+    @page { size: A4; margin: 20mm; }
+    body { font-family: Arial, sans-serif; color: #111; line-height: 1.45; }
+    h1 { font-size: 20pt; margin: 0 0 8px; }
+    h2 { font-size: 15pt; margin: 16px 0 10px; }
+    h3 { font-size: 12.5pt; margin: 12px 0 8px; }
+    p, li { font-size: 11pt; }
+    .muted { color: #444; }
+    ul, ol { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <h1>BIGTIME POS</h1>
+  <h2>Item 9 Compliance Sample</h2>
+  <h3>Narrative system description and design / structure of the Sales Machine / Software being applied for accreditation</h3>
+
+  <p><strong>Requirement covered:</strong></p>
+  <p class="muted">"9. Narrative system description and design/ structure of the 'Sales Machine/Software' being applied for accreditation;"</p>
+  <p>Prepared on: April 15, 2026<br/>System: BIGTIME POS</p>
+
+  <h2>1. Narrative System Description</h2>
+  <p>BIGTIME POS is an integrated sales and back-office platform designed for cashiering, receipt issuance, inventory control, reporting, and operational administration. The system is intended for use in retail environments where transactions must continue in both online and temporary offline conditions while preserving central records and statutory outputs.</p>
+  <p>The platform is composed of three primary layers:</p>
+  <ul>
+    <li>POS Terminal Application used by cashiers on Windows or Android devices</li>
+    <li>Back-office Dashboard used by administrators, managers, and authorized office users</li>
+    <li>Central API and database services used for business rules, transaction processing, synchronization, and reports</li>
+  </ul>
+  <p>BIGTIME POS supports the full transaction cycle from cashier login up to receipt generation, shift accountability, and end-of-day operational reporting. The system also supports inventory and listing maintenance, employee management, receipt retrieval, report generation, and audit visibility.</p>
+
+  <h2>2. System Design and Structure</h2>
+  <h3>2.1 POS Terminal Layer</h3>
+  <p>The POS terminal is the front-line cashier application. It is designed for guided operational flow and practical in-store usage. The normal sequence of use is:</p>
+  <ol>
+    <li>Cashier login</li>
+    <li>Shift opening</li>
+    <li>Selling and cart building</li>
+    <li>Payment confirmation</li>
+    <li>Receipt issuance</li>
+  </ol>
+  <p>The POS terminal supports employee code and PIN login, shift cash handling, item search and sale entry, discount application, payment processing, receipt printing and reprinting, X-reading and Z-reading generation, and temporary offline continuity using local storage and queued sync records.</p>
+
+  <h3>2.2 Back-Office Dashboard Layer</h3>
+  <p>The dashboard is the centralized administration and monitoring interface. It is used to maintain business data and review outputs produced by the POS and central services.</p>
+  <p>Major dashboard modules include receipts, catalog and listing maintenance, inventory and stock operations, employee and POS user administration, reports and compliance-oriented report views, and settings/account management.</p>
+
+  <h3>2.3 Central API and Data Layer</h3>
+  <p>The central API is the business logic layer of BIGTIME POS. It provides authenticated endpoints and coordinates the processing of transactions and operational data.</p>
+  <ul>
+    <li>authentication and access control</li>
+    <li>transaction intake and receipt generation</li>
+    <li>pricing, catalog, inventory, and employee services</li>
+    <li>audit visibility and receipt event logging</li>
+    <li>report generation and compliance-related endpoints</li>
+    <li>synchronization handling for offline terminal records</li>
+    <li>realtime and queue-assisted backend operations</li>
+  </ul>
+  <p>Central persistence is maintained in PostgreSQL. Queue-oriented infrastructure is supported through Redis. For offline continuity, the POS terminal keeps local records using SQLite through Drift until synchronization is completed.</p>
+
+  <h2>3. High-Level Operating Structure</h2>
+  <ul>
+    <li>Cashier transactions originate from the POS terminal</li>
+    <li>Central business validation and record management are handled by the API</li>
+    <li>Administrative review and maintenance are performed in the dashboard</li>
+    <li>Central records are stored in the database</li>
+    <li>Offline transactions are temporarily stored locally and synchronized later</li>
+  </ul>
+  <p>This structure allows store operations to continue during short connectivity interruptions while preserving the role of the server as the authoritative source of centrally stored records when connection is available.</p>
+
+  <h2>4. Users and Roles</h2>
+  <ul>
+    <li>Cashier: performs sales, payment, receipt issuance, and shift handling in the POS terminal</li>
+    <li>Supervisor or Manager: oversees operations, adjustments, and end-of-day accountability</li>
+    <li>Administrator / Back-office User: maintains master data, reviews reports, manages users, and monitors statutory outputs</li>
+  </ul>
+
+  <h2>5. Compliance-Relevant Design Characteristics</h2>
+  <ul>
+    <li>guided sales flow from login to receipt</li>
+    <li>centralized receipt and transaction record handling</li>
+    <li>audit-aware event visibility</li>
+    <li>reporting and export support</li>
+    <li>online and offline operating modes</li>
+    <li>shift and end-of-day reporting processes</li>
+    <li>centralized administrative maintenance of key business data</li>
+  </ul>
+
+  <h2>6. Document Purpose</h2>
+  <p>This narrative system description is prepared as the Item 9 attachment for Annex B submission and describes the design and operating structure of the BIGTIME POS sales software being applied for accreditation.</p>
+</body>
+</html>

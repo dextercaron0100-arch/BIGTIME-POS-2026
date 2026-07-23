@@ -1,0 +1,29 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.log
+
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+build/
+ios/Flutter/Flutter.podspec
+
+# Generated
+apps/api-nestjs/node_modules/
+apps/api-nestjs/storage/*
+!apps/api-nestjs/storage/.gitkeep
+apps/dashboard-react/node_modules/
+packages/shared-types/node_modules/
+
+# Build outputs (regenerable, too large for git; GitHub also hard-rejects >100MB files)
+*.apk
+*.aab
+*.ipa
+artifacts/*.apk

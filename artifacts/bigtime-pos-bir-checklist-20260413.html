@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BIGTIME POS BIR Checklist</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm;
+    }
+
+    :root {
+      color-scheme: light;
+      --ink: #162033;
+      --muted: #5f6b7a;
+      --line: #d7dfeb;
+      --accent: #1544b3;
+      --soft: #f4f7fb;
+      --ok: #1f7a3d;
+      --warn: #9a6400;
+      --manual: #7a1f1f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: #fff;
+      line-height: 1.45;
+    }
+
+    .page {
+      width: 100%;
+    }
+
+    .hero {
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 100%);
+      border-radius: 18px;
+      padding: 28px 30px 24px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.15;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .note {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-left: 4px solid var(--accent);
+      background: rgba(21, 68, 179, 0.06);
+      font-size: 14px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 18px 0 20px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      background: #fff;
+    }
+
+    .summary-card strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .summary-card span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px 18px 16px;
+      margin-bottom: 14px;
+      page-break-inside: avoid;
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.25;
+    }
+
+    .status {
+      white-space: nowrap;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .status-ready {
+      background: rgba(31, 122, 61, 0.12);
+      color: var(--ok);
+    }
+
+    .status-partial {
+      background: rgba(154, 100, 0, 0.14);
+      color: var(--warn);
+    }
+
+    .status-manual {
+      background: rgba(122, 31, 31, 0.12);
+      color: var(--manual);
+    }
+
+    p {
+      margin: 0 0 10px;
+      font-size: 14px;
+    }
+
+    ul {
+      margin: 0 0 10px 18px;
+      padding: 0;
+      font-size: 14px;
+    }
+
+    li + li {
+      margin-top: 4px;
+    }
+
+    .evidence {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .footer {
+      margin-top: 20px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--soft);
+      font-size: 13px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>BIGTIME POS Accreditation Checklist</h1>
+      <p class="subtitle">Prepared on April 13, 2026 for the current BIGTIME POS build.</p>
+      <div class="note">
+        Scope note: Requirement #5 was intentionally excluded based on the requested checklist scope.
+      </div>
+    </section>
+
+    <section class="summary">
+      <div class="summary-card">
+        <strong>4</strong>
+        <span>Checklist items included</span>
+      </div>
+      <div class="summary-card">
+        <strong>2</strong>
+        <span>Items mostly ready in the system</span>
+      </div>
+      <div class="summary-card">
+        <strong>1</strong>
+        <span>Item that remains a manual requirement</span>
+      </div>
+    </section>
+
+    <section class="item">
+      <div class="item-header">
+        <h2>1. Functional Checklist (Annex B)</h2>
+        <span class="status status-partial">PARTIALLY READY</span>
+      </div>
+      <p>The BIGTIME POS system already includes the core functional areas that usually support Annex B review, but the accomplished Annex B form itself still needs to be completed and submitted as a documentary requirement.</p>
+      <ul>
+        <li>POS transactions, receipt flow, and audit trail are present.</li>
+        <li>Reports, BIR, and EIS modules are present.</li>
+        <li>Offline sync, security controls, and cashier workflows are documented.</li>
+      </ul>
+      <div class="evidence">
+        Repository evidence: docs/system-documentation.md and docs/bir-accreditation-readiness.md
+      </div>
+    </section>
+
+    <section class="item">
+      <div class="item-header">
+        <h2>2. Sworn Statement (Annex C)</h2>
+        <span class="status status-manual">MANUAL REQUIREMENT</span>
+      </div>
+      <p>This requirement is not generated by the application itself. The sworn statement must still be prepared, signed, and notarized outside the software as part of the accreditation packet.</p>
+      <ul>
+        <li>System features can support the content of the sworn statement.</li>
+        <li>The notarized Annex C document must still be prepared manually.</li>
+      </ul>
+      <div class="evidence">
+        Repository evidence: docs/bir-accreditation-readiness.md
+      </div>
+    </section>
+
+    <section class="item">
+      <div class="item-header">
+        <h2>3. System Description</h2>
+        <span class="status status-ready">READY WITH MINOR POLISH</span>
+      </div>
+      <p>The repo already includes a system description and user manual covering the software overview, architecture, transaction flow, cashier flow, security controls, offline behavior, and operations.</p>
+      <ul>
+        <li>System overview, architecture, and modules are documented.</li>
+        <li>Transaction flow and cashier workflow are documented.</li>
+        <li>Operational notes are present.</li>
+        <li>A dedicated backup-procedures subsection can still be added if the evaluator expects it explicitly.</li>
+      </ul>
+      <div class="evidence">
+        Repository evidence: docs/system-documentation.md and docs/user-manual-pos.md
+      </div>
+    </section>
+
+    <section class="item">
+      <div class="item-header">
+        <h2>4. Sample Receipts</h2>
+        <span class="status status-ready">IMPLEMENTED, NEEDS SAMPLE PACK</span>
+      </div>
+      <p>The software already supports receipt issuance and receipt-related audit logging. What remains is preparing the actual sample receipt outputs for the accreditation submission set.</p>
+      <ul>
+        <li>Online sales receive server-issued OR and reference values.</li>
+        <li>Receipt actions support print, reprint, and email handoff.</li>
+        <li>Receipt action events are synced into the backend audit trail.</li>
+        <li>Submission still needs sample printed or exported receipts in the final required format.</li>
+      </ul>
+      <div class="evidence">
+        Repository evidence: docs/system-documentation.md, docs/user-manual-pos.md, and docs/bir-accreditation-readiness.md
+      </div>
+    </section>
+
+    <section class="footer">
+      Overall summary: BIGTIME POS is strongest on System Description and Sample Receipts, is substantially aligned for Functional Checklist support, and still needs a manual Sworn Statement package for accreditation submission.
+    </section>
+  </main>
+</body>
+</html>

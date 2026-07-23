@@ -1,0 +1,462 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  SUPERVISOR
+  CASHIER
+  INVENTORY
+  AUDITOR
+}
+
+enum TaxType {
+  VATABLE
+  VAT_EXEMPT
+  ZERO_RATED
+}
+
+enum DiscountType {
+  FIXED
+  PERCENTAGE
+  SC
+  PWD
+  PROMO
+}
+
+enum TransactionStatus {
+  COMPLETED
+  VOID
+  RETURNED
+  HELD
+}
+
+enum TransactionType {
+  SALE
+  RETURN
+}
+
+enum PaymentMethodType {
+  CASH
+  CARD
+  GCASH
+  MAYA
+  SPLIT
+}
+
+enum StockMovementType {
+  SALE
+  RECEIPT
+  TRANSFER
+  PULLOUT
+  ADJUSTMENT
+  RETURN
+  VOID
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  APPROVED
+  PARTIAL
+  RECEIVED
+  CANCELLED
+}
+
+enum RateType {
+  HOURLY
+  DAILY
+  MONTHLY
+}
+
+model Branch {
+  id           String          @id @default(uuid()) @db.Uuid
+  name         String
+  address      String?
+  birAccNum    String?         @map("bir_acc_num")
+  active       Boolean         @default(true)
+  createdAt    DateTime        @default(now()) @map("created_at")
+  users        User[]
+  terminals    Terminal[]
+  warehouses   Warehouse[]
+  paymentMethods PaymentMethod[]
+  purchaseOrders PurchaseOrder[]
+  employees    Employee[]
+
+  @@map("branches")
+}
+
+model User {
+  id          String    @id @default(uuid()) @db.Uuid
+  branchId    String    @db.Uuid @map("branch_id")
+  name        String
+  pinHash     String    @map("pin_hash")
+  role        UserRole  @default(CASHIER)
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  branch      Branch    @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  shifts      Shift[]
+
+  @@index([branchId])
+  @@map("users")
+}
+
+model Terminal {
+  id         String       @id @default(uuid()) @db.Uuid
+  branchId   String       @db.Uuid @map("branch_id")
+  serialNum  String       @unique @map("serial_num")
+  birSn      String       @unique @map("bir_sn")
+  lastZAt    DateTime?    @map("last_z_at")
+  active     Boolean      @default(true)
+  createdAt  DateTime     @default(now()) @map("created_at")
+  branch     Branch       @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  shifts     Shift[]
+
+  @@index([branchId])
+  @@map("terminals")
+}
+
+model Shift {
+  id           String    @id @default(uuid()) @db.Uuid
+  terminalId   String    @db.Uuid @map("terminal_id")
+  userId       String    @db.Uuid @map("user_id")
+  openedAt     DateTime  @map("opened_at")
+  closedAt     DateTime? @map("closed_at")
+  openingCash  Decimal   @db.Decimal(12, 4) @map("opening_cash")
+  closingCash  Decimal?  @db.Decimal(12, 4) @map("closing_cash")
+  terminal     Terminal  @relation(fields: [terminalId], references: [id], onDelete: Restrict)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([terminalId])
+  @@index([userId])
+  @@map("shifts")
+}
+
+model CategoryGroup {
+  id         String   @id @default(uuid()) @db.Uuid
+  branchId   String   @db.Uuid @map("branch_id")
+  name       String
+  sortOrder  Int      @default(0) @map("sort_order")
+  createdBy  String?  @db.Uuid @map("created_by")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@map("category_groups")
+}
+
+model Category {
+  id         String   @id @default(uuid()) @db.Uuid
+  branchId   String   @db.Uuid @map("branch_id")
+  groupId    String   @db.Uuid @map("group_id")
+  name       String
+  color      String?
+  sortOrder  Int      @default(0) @map("sort_order")
+  createdBy  String?  @db.Uuid @map("created_by")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@index([groupId])
+  @@map("categories")
+}
+
+model Item {
+  id              String    @id @default(uuid()) @db.Uuid
+  branchId        String    @db.Uuid @map("branch_id")
+  categoryId      String    @db.Uuid @map("category_id")
+  name            String
+  sku             String
+  barcode         String?
+  price           Decimal   @db.Decimal(12, 4)
+  cost            Decimal?  @db.Decimal(12, 4)
+  taxId           String?   @db.Uuid @map("tax_id")
+  unit            String
+  trackInventory  Boolean   @default(true) @map("track_inventory")
+  createdBy       String?   @db.Uuid @map("created_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  @@unique([branchId, sku])
+  @@index([branchId])
+  @@index([categoryId])
+  @@map("items")
+}
+
+model ItemVariant {
+  id             String    @id @default(uuid()) @db.Uuid
+  branchId       String    @db.Uuid @map("branch_id")
+  itemId         String    @db.Uuid @map("item_id")
+  name           String
+  sku            String?
+  priceModifier  Decimal   @db.Decimal(12, 4) @map("price_modifier")
+  createdBy      String?   @db.Uuid @map("created_by")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@index([itemId])
+  @@map("item_variants")
+}
+
+model Tax {
+  id         String    @id @default(uuid()) @db.Uuid
+  branchId   String    @db.Uuid @map("branch_id")
+  name       String
+  rate       Decimal   @db.Decimal(12, 4)
+  type       TaxType
+  birCode    String    @map("bir_code")
+  active     Boolean   @default(true)
+  createdBy  String?   @db.Uuid @map("created_by")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@map("taxes")
+}
+
+model Discount {
+  id            String       @id @default(uuid()) @db.Uuid
+  branchId      String       @db.Uuid @map("branch_id")
+  name          String
+  type          DiscountType
+  value         Decimal      @db.Decimal(12, 4)
+  requiresAuth  Boolean      @default(false) @map("requires_auth")
+  birCode       String?      @map("bir_code")
+  active        Boolean      @default(true)
+  createdBy     String?      @db.Uuid @map("created_by")
+  createdAt     DateTime     @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@map("discounts")
+}
+
+model Transaction {
+  id            String             @id @default(uuid()) @db.Uuid
+  branchId      String             @db.Uuid @map("branch_id")
+  terminalId    String             @db.Uuid @map("terminal_id")
+  shiftId       String?            @db.Uuid @map("shift_id")
+  cashierId     String             @db.Uuid @map("cashier_id")
+  refNum        String             @unique @map("ref_num")
+  subtotal      Decimal            @db.Decimal(12, 4)
+  discountAmt   Decimal            @db.Decimal(12, 4) @map("discount_amt")
+  taxAmt        Decimal            @db.Decimal(12, 4) @map("tax_amt")
+  total         Decimal            @db.Decimal(12, 4)
+  status        TransactionStatus
+  type          TransactionType
+  orNumber      Int                @unique @default(dbgenerated("nextval('or_number_seq'::regclass)")) @map("or_number")
+  originalTxnId String?            @db.Uuid @map("original_txn_id")
+  createdBy     String?            @db.Uuid @map("created_by")
+  createdAt     DateTime           @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@index([shiftId])
+  @@index([cashierId])
+  @@map("transactions")
+}
+
+model TransactionItem {
+  id          String    @id @default(uuid()) @db.Uuid
+  branchId    String    @db.Uuid @map("branch_id")
+  txnId       String    @db.Uuid @map("txn_id")
+  itemId      String    @db.Uuid @map("item_id")
+  variantId   String?   @db.Uuid @map("variant_id")
+  qty         Decimal   @db.Decimal(12, 4)
+  unitPrice   Decimal   @db.Decimal(12, 4) @map("unit_price")
+  discountId  String?   @db.Uuid @map("discount_id")
+  taxId       String?   @db.Uuid @map("tax_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@index([txnId])
+  @@map("transaction_items")
+}
+
+model PaymentMethod {
+  id         String             @id @default(uuid()) @db.Uuid
+  branchId   String             @db.Uuid @map("branch_id")
+  name       String
+  type       PaymentMethodType
+  active     Boolean            @default(true)
+  createdBy  String?            @db.Uuid @map("created_by")
+  createdAt  DateTime           @default(now()) @map("created_at")
+  branch     Branch             @relation(fields: [branchId], references: [id], onDelete: Restrict)
+
+  @@index([branchId])
+  @@map("payment_methods")
+}
+
+model Payment {
+  id          String    @id @default(uuid()) @db.Uuid
+  branchId    String    @db.Uuid @map("branch_id")
+  txnId       String    @db.Uuid @map("txn_id")
+  methodId    String    @db.Uuid @map("method_id")
+  amount      Decimal   @db.Decimal(12, 4)
+  reference   String?
+  changeAmt   Decimal?  @db.Decimal(12, 4) @map("change_amt")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@index([txnId])
+  @@map("payments")
+}
+
+model Warehouse {
+  id         String    @id @default(uuid()) @db.Uuid
+  branchId   String    @db.Uuid @map("branch_id")
+  name       String
+  address    String?
+  isDefault  Boolean   @default(false) @map("is_default")
+  createdBy  String?   @db.Uuid @map("created_by")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  branch     Branch    @relation(fields: [branchId], references: [id], onDelete: Restrict)
+
+  @@index([branchId])
+  @@map("warehouses")
+}
+
+model StockLevel {
+  id           String    @id @default(uuid()) @db.Uuid
+  branchId     String    @db.Uuid @map("branch_id")
+  itemId       String    @db.Uuid @map("item_id")
+  variantId    String?   @db.Uuid @map("variant_id")
+  warehouseId  String    @db.Uuid @map("warehouse_id")
+  qtyOnHand    Decimal   @db.Decimal(12, 4) @map("qty_on_hand")
+  reorderPt    Decimal   @db.Decimal(12, 4) @map("reorder_pt")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  @@unique([branchId, itemId, variantId, warehouseId])
+  @@index([branchId])
+  @@map("stock_levels")
+}
+
+model StockMovement {
+  id          String            @id @default(uuid()) @db.Uuid
+  branchId    String            @db.Uuid @map("branch_id")
+  itemId      String            @db.Uuid @map("item_id")
+  variantId   String?           @db.Uuid @map("variant_id")
+  type        StockMovementType
+  qty         Decimal           @db.Decimal(12, 4)
+  fromWh      String?           @db.Uuid @map("from_wh")
+  toWh        String?           @db.Uuid @map("to_wh")
+  refId       String?           @db.Uuid @map("ref_id")
+  refType     String?           @map("ref_type")
+  createdBy   String?           @db.Uuid @map("created_by")
+  createdAt   DateTime          @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@index([itemId])
+  @@map("stock_movements")
+}
+
+model Supplier {
+  id          String    @id @default(uuid()) @db.Uuid
+  branchId    String    @db.Uuid @map("branch_id")
+  name        String
+  contactName String?   @map("contact_name")
+  email       String?
+  phone       String?
+  createdBy   String?   @db.Uuid @map("created_by")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@map("suppliers")
+}
+
+model PurchaseOrder {
+  id          String              @id @default(uuid()) @db.Uuid
+  branchId    String              @db.Uuid @map("branch_id")
+  supplierId  String              @db.Uuid @map("supplier_id")
+  status      PurchaseOrderStatus @default(DRAFT)
+  total       Decimal             @db.Decimal(12, 4)
+  createdBy   String?             @db.Uuid @map("created_by")
+  createdAt   DateTime            @default(now()) @map("created_at")
+  branch      Branch              @relation(fields: [branchId], references: [id], onDelete: Restrict)
+
+  @@index([branchId])
+  @@index([supplierId])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id           String    @id @default(uuid()) @db.Uuid
+  branchId     String    @db.Uuid @map("branch_id")
+  poId         String    @db.Uuid @map("po_id")
+  itemId       String    @db.Uuid @map("item_id")
+  qtyOrdered   Decimal   @db.Decimal(12, 4) @map("qty_ordered")
+  qtyReceived  Decimal   @db.Decimal(12, 4) @map("qty_received")
+  unitCost     Decimal   @db.Decimal(12, 4) @map("unit_cost")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@index([poId])
+  @@map("po_items")
+}
+
+model Employee {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String?   @unique @db.Uuid @map("user_id")
+  branchId    String    @db.Uuid @map("branch_id")
+  fullName    String    @map("full_name")
+  position    String
+  hireDate    DateTime  @map("hire_date")
+  rateType    RateType  @map("rate_type")
+  rate        Decimal   @db.Decimal(12, 4)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  branch      Branch    @relation(fields: [branchId], references: [id], onDelete: Restrict)
+
+  @@index([branchId])
+  @@map("employees")
+}
+
+model TimeEntry {
+  id         String    @id @default(uuid()) @db.Uuid
+  branchId   String    @db.Uuid @map("branch_id")
+  employeeId String    @db.Uuid @map("employee_id")
+  clockIn    DateTime  @map("clock_in")
+  clockOut   DateTime? @map("clock_out")
+  breakMins  Int       @default(0) @map("break_mins")
+  totalHrs   Decimal?  @db.Decimal(12, 4) @map("total_hrs")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@index([employeeId])
+  @@map("time_entries")
+}
+
+model BirZReading {
+  id             String    @id @default(uuid()) @db.Uuid
+  branchId       String    @db.Uuid @map("branch_id")
+  terminalId     String    @db.Uuid @map("terminal_id")
+  zNumber        Int       @default(dbgenerated("nextval('z_counter_seq'::regclass)")) @map("z_number")
+  date           DateTime  @db.Date
+  begOr          Int       @map("beg_or")
+  endOr          Int       @map("end_or")
+  grossSales     Decimal   @db.Decimal(12, 4) @map("gross_sales")
+  vatable        Decimal   @db.Decimal(12, 4)
+  vatAmt         Decimal   @db.Decimal(12, 4) @map("vat_amt")
+  vatExempt      Decimal   @db.Decimal(12, 4) @map("vat_exempt")
+  zeroRated      Decimal   @db.Decimal(12, 4) @map("zero_rated")
+  discountTotal  Decimal   @db.Decimal(12, 4) @map("discount_total")
+  submittedAt    DateTime? @map("submitted_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@index([terminalId, date])
+  @@map("bir_z_readings")
+}
+
+model AuditLog {
+  id         String    @id @default(uuid()) @db.Uuid
+  branchId   String    @db.Uuid @map("branch_id")
+  userId     String?   @db.Uuid @map("user_id")
+  action     String
+  tableName  String    @map("table_name")
+  recordId   String    @db.Uuid @map("record_id")
+  oldVal     Json?     @map("old_val")
+  newVal     Json?     @map("new_val")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([branchId])
+  @@index([tableName, recordId])
+  @@map("audit_log")
+}
