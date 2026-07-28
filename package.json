@@ -16,9 +16,12 @@
     "dev:dashboard": "npm run dev -w @apex-pos/dashboard",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "security:audit": "npm audit --omit=dev --audit-level=high"
+    "security:audit": "node scripts/security-audit.mjs"
   },
   "engines": {
     "node": ">=22.0.0"
+  },
+  "overrides": {
+    "js-yaml@5.2.1": "5.2.2"
   }
 }
