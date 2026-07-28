@@ -26,7 +26,17 @@ describe('sensitive data encryption', () => {
 
   it('rejects tampered ciphertext', () => {
     const encrypted = encryptSensitiveValue('TOP-SECRET');
-    const tampered = `${encrypted.slice(0, -1)}${encrypted.endsWith('A') ? 'B' : 'A'}`;
+    const [version, initializationVector, authenticationTag, encodedCiphertext] =
+      encrypted.split(':');
+    const ciphertext = Buffer.from(encodedCiphertext, 'base64url');
+    ciphertext[0] ^= 1;
+    const tampered = [
+      version,
+      initializationVector,
+      authenticationTag,
+      ciphertext.toString('base64url'),
+    ].join(':');
+
     expect(() => decryptSensitiveValue(tampered)).toThrow();
   });
 });
